@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 
 class FormBuscar:
     def __init__(self, root, arvore):
@@ -7,16 +7,32 @@ class FormBuscar:
 
         self.window = tk.Toplevel(root)
         self.window.title("Buscar Livro")
+        self.window.resizable(False, False)
 
-        tk.Label(self.window, text="ISBN:").pack()
-        self.isbn_entry = tk.Entry(self.window)
-        self.isbn_entry.pack()
+        self._center_window(self.window, 320, 140)
 
-        tk.Button(self.window, text="Buscar",
-                  command=self.buscar).pack(pady=10)
+        container = ttk.Frame(self.window, padding=12)
+        container.pack(fill='both', expand=True)
+
+        ttk.Label(container, text="ISBN:").grid(row=0, column=0, sticky='w')
+        self.isbn_entry = ttk.Entry(container)
+        self.isbn_entry.grid(row=0, column=1, padx=(6,0), sticky='ew')
+
+        container.columnconfigure(1, weight=1)
+
+        ttk.Button(container, text="Buscar",
+                   command=self.buscar).grid(row=1, column=0, columnspan=2, pady=(10,0))
+
+        self.isbn_entry.focus_set()
+
+    def _center_window(self, win, w, h):
+        win.update_idletasks()
+        x = (win.winfo_screenwidth() // 2) - (w // 2)
+        y = (win.winfo_screenheight() // 2) - (h // 2)
+        win.geometry(f"{w}x{h}+{x}+{y}")
 
     def buscar(self):
-        isbn = self.isbn_entry.get()
+        isbn = self.isbn_entry.get().strip()
         node = self.arvore.search(isbn)
 
         if node:
